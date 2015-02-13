@@ -1,0 +1,8 @@
+Chapter 2
+State Design Pattern (47 - 50)
+
+State Machine Class
+
+Add messaging capabilities to your FSM
+
+CURRENT PAGE  99
