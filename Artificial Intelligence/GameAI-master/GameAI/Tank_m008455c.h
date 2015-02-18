@@ -4,8 +4,15 @@
 #include "BaseTank.h"
 #include <SDL.h>
 #include "Commons.h"
+#include "ObstacleManager.h"
+#include "WaypointManager.h"
+#include "Waypoint.h"
 
 #include "Tank_m008455c.h"
+
+#include <iostream>
+
+using namespace std;
 
 
 enum BehaviourState
@@ -19,7 +26,8 @@ enum BehaviourState
 	WANDERING,
 	OBSTACLE_AVOIDANCE,
 	PATHFIND,
-	ATTACK
+	ATTACK,
+	FOLLOWAYPOINT // DEBUG
 };
 
 //---------------------------------------------------------------
@@ -57,8 +65,8 @@ private:
 	BehaviourState currentBehaviourState = SEEK;
 
 	Vector2D targetTankPos;
-	void  SetObstacleAvoidanceArea();
-	//Rect2D mAvoidanceArea;
+
+	int currentWaypointID = 0;
 
 	void TankMove(float deltaTime);
 
@@ -77,8 +85,14 @@ private:
 	Vector2D Pursuit(BaseTank* targetTank);
 	void Evade(float deltaTime, SDL_Event e);
 	void Wandering(float deltaTime, SDL_Event e);
-	void ObstacleAvoidance(float deltaTime, SDL_Event e);
+
+
+	Vector2D ObstacleAvoidance(Vector2D targetPos);
+	bool IsCloseToObstacle(GameObject* obstacle);
+
 	void Pathfind(float deltaTime, SDL_Event e);
+	Vector2D FollowWaypoint();
+	Vector2D Avoid(GameObject* obstacle);
 };
 
 //---------------------------------------------------------------

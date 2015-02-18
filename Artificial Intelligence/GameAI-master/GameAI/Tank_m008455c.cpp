@@ -1,5 +1,4 @@
 #include "Tank_m008455c.h"
-#include "Commons.h"
 
 //--------------------------------------------------------------------------------------------------
 
@@ -16,6 +15,8 @@ Tank_m008455c::Tank_m008455c(SDL_Renderer* renderer, TankSetupDetails details)
 
 	mousePoint.x = GetPosition().x;
 	mousePoint.y = GetPosition().y;
+
+	//SetObstacleAvoidanceArea();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -83,19 +84,6 @@ Rect2D Tank_m008455c::GetAdjustedBoundingBox()
 
 //--------------------------------------------------------------------------------------------------
 
-void Tank_m008455c::SetObstacleAvoidanceArea()
-{
-	Rect2D avoidanceArea = GetAdjustedBoundingBox();
-
-	avoidanceArea.height += avoidanceArea.height;
-	avoidanceArea.width += avoidanceArea.width;
-
-	//mAvoidanceArea = avoidanceArea;
-}
-
-//--------------------------------------------------------------------------------------------------
-
-
 void Tank_m008455c::CheckMouseInput(SDL_Event e)
 {
 	if (e.button.type == SDL_MOUSEBUTTONDOWN)
@@ -111,7 +99,7 @@ Vector2D Tank_m008455c::CalculateForce(Vector2D targetPos)
 {
 	Vector2D netForce = Vector2D(0.0f, 0.0f);
 
-	netForce += Arrive(targetPos);
+	netForce += ObstacleAvoidance(targetPos);
 
 	return netForce;
 }
@@ -142,7 +130,7 @@ Vector2D Tank_m008455c::Flee(Vector2D targetPos)
 {
 	// Opposite direction to Seek.
 	Vector2D desiredVelocity = Vec2DNormalize(GetCentrePosition() - targetPos)
-		* mMaxSpeed;
+		* GetMaxSpeed();
 
 	return (desiredVelocity + mVelocity);
 }
@@ -159,7 +147,7 @@ Vector2D Tank_m008455c::Arrive(Vector2D targetPos)
 	if (distance > 0)
 	{
 		double speed = distance / 3.0f;
-		speed = min(speed, mMaxSpeed);
+		speed = min(speed, GetMaxSpeed());
 		Vector2D desiredVelocity = targetVector * (speed / distance);
 
 		return (desiredVelocity - mVelocity);
@@ -196,10 +184,44 @@ void Tank_m008455c::Wandering(float deltaTime, SDL_Event e)
 	// a more random wander.
 }
 
-void Tank_m008455c::ObstacleAvoidance(float deltaTime, SDL_Event e)
+Vector2D Tank_m008455c::ObstacleAvoidance(Vector2D targetPos)
 {
 	// Avoid obstacles that will collide with the tank if the tank
 	// continues it's path.
+
+	vector<GameObject*> obstacleList = ObstacleManager::Instance()->GetObstacles();
+
+
+	for (unsigned int i = 0; i < obstacleList.size(); i++)
+	{
+		if (IsCloseToObstacle(obstacleList[i]))	
+			return Avoid(obstacleList[i]) + Seek(targetPos);
+	}
+
+	return Seek(targetPos);
+}
+
+bool Tank_m008455c::IsCloseToObstacle(GameObject* obstacle)
+{
+	if (GetCentralPosition().x * 2 < obstacle->GetAdjustedBoundingBox().x)
+		return false;
+	else if ((GetCentralPosition().x + GetAdjustedBoundingBox().width) * 2 >
+		obstacle->GetAdjustedBoundingBox().x + obstacle->GetAdjustedBoundingBox().width)
+			return false;
+		else if (GetCentralPosition().y * 2 < obstacle->GetAdjustedBoundingBox().y)
+				return false;
+			else if ((GetCentralPosition().y + GetAdjustedBoundingBox().width) * 2 >
+				obstacle->GetAdjustedBoundingBox().y + obstacle->GetAdjustedBoundingBox().height)
+					return false;
+	return true;
+}
+
+Vector2D Tank_m008455c::Avoid(GameObject* obstacle)
+{
+	Vector2D repulsionVector = Vector2D(GetCentralPosition().x - obstacle->GetCentralPosition().x,
+		GetCentralPosition().y - obstacle->GetCentralPosition().y);
+
+	return repulsionVector;
 }
 
 //Vector2D SteeringBehavior::ObstacleAvoidance(const std::vector<BaseGameEntity*>& obstacles)
@@ -314,4 +336,23 @@ void Tank_m008455c::Pathfind(float deltaTime, SDL_Event e)
 {
 	// Move to the target position, finding the quickest route around objects 
 	// and obstacles.
+}
+
+Vector2D Tank_m008455c::FollowWaypoint()
+{
+	Vector2D wayPointPos = WaypointManager::Instance()->GetWaypointWithID(currentWaypointID)->GetPosition();
+
+	// If the waypoint has been reached.
+	if (GetPosition() == wayPointPos)
+	{
+		// If the index is higher than the max number of objects ( -1 due to index).
+		if (currentWaypointID > 16)
+			currentWaypointID = 0;
+		else
+			currentWaypointID++;
+	}
+	else
+		return Seek(wayPointPos); // Else seek towards the waypoint.
+
+	return Seek(GetPosition());
 }

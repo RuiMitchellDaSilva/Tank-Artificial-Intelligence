@@ -1,0 +1,4 @@
+﻿  main.cpp
+c:\users\mizukami\desktop\artificial intelligence\bfsanddfs\bfsanddfs\main.cpp(23): warning C4018: '<' : signed/unsigned mismatch
+c:\users\mizukami\desktop\artificial intelligence\bfsanddfs\bfsanddfs\main.cpp(50): warning C4018: '<' : signed/unsigned mismatch
+  BFSandDFS.vcxproj -> C:\Users\mizukami\Desktop\Artificial Intelligence\BFSandDFS\Debug\BFSandDFS.exe
