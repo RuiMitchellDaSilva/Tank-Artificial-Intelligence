@@ -7,13 +7,13 @@
 #include "ObstacleManager.h"
 #include "WaypointManager.h"
 #include "Waypoint.h"
+#include "C2DMatrix.h"
 
 #include "Tank_m008455c.h"
 
 #include <iostream>
 
 using namespace std;
-
 
 enum BehaviourState
 {
@@ -68,6 +68,8 @@ private:
 
 	int currentWaypointID = 0;
 
+	Vector2D sideVector;
+	
 	void TankMove(float deltaTime);
 
 	void CheckMouseInput(SDL_Event e);
@@ -76,6 +78,10 @@ private:
 	void ChangeBehaviour(BehaviourState newBehaviourState) { currentBehaviourState = newBehaviourState; };
 
 	Vector2D CalculateForce(Vector2D targetPos);
+
+	void RotateTank(Vector2D targetPos);
+
+	float mRadius = (float)sqrt((GetAdjustedBoundingBox().height * GetAdjustedBoundingBox().height) + (GetAdjustedBoundingBox().width * GetAdjustedBoundingBox().width));
 
 	// All Behavioural States that the tank can have
 	void Thinking();
@@ -88,11 +94,9 @@ private:
 
 
 	Vector2D ObstacleAvoidance(Vector2D targetPos);
-	bool IsCloseToObstacle(GameObject* obstacle);
 
 	void Pathfind(float deltaTime, SDL_Event e);
 	Vector2D FollowWaypoint();
-	Vector2D Avoid(GameObject* obstacle);
 };
 
 //---------------------------------------------------------------
