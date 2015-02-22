@@ -115,7 +115,8 @@ Vector2D Tank_m008455c::CalculateForce(Vector2D targetPos)
 {
 	Vector2D netForce = Vector2D(0.0f, 0.0f);
 
-	netForce += ObstacleAvoidance(targetPos);
+	netForce += ObstacleAvoidance(Vec2DNormalize(targetPos));
+	netForce += Arrive(targetPos);
 
 	return netForce;
 }
@@ -200,12 +201,12 @@ void Tank_m008455c::Wandering(float deltaTime, SDL_Event e)
 	// a more random wander.
 }
 
-Vector2D Tank_m008455c::ObstacleAvoidance(Vector2D targetPos)
+Vector2D Tank_m008455c::ObstacleAvoidance(Vector2D targetVector)
 {
 	// Avoid obstacles that will collide with the tank if the tank
 	// continues it's path.
-	sideVector.x = -mHeading.y;
-	sideVector.y = mHeading.x;
+	sideVector.x = -targetVector.y;
+	sideVector.y = targetVector.x;
 
 	vector<GameObject*> obstacleList = ObstacleManager::Instance()->GetObstacles();
 
@@ -221,29 +222,30 @@ Vector2D Tank_m008455c::ObstacleAvoidance(Vector2D targetPos)
 	{
 		Vector2D to = obstacleList[i]->GetCentralPosition() - GetPosition();
 
-		obstacleRadius = sqrt((obstacleList[i]->GetAdjustedBoundingBox().height * obstacleList[i]->GetAdjustedBoundingBox().height) +
-			(obstacleList[i]->GetAdjustedBoundingBox().width * obstacleList[i]->GetAdjustedBoundingBox().width));
+		double heightSq = (obstacleList[i]->GetAdjustedBoundingBox().height / 1.5) * (obstacleList[i]->GetAdjustedBoundingBox().height / 1.5);
+		double widthSq = (obstacleList[i]->GetAdjustedBoundingBox().width / 1.5) * (obstacleList[i]->GetAdjustedBoundingBox().width / 1.5);
+
+		obstacleRadius = sqrt(heightSq + widthSq);
+
 
 		double range = obstacleRadius;
 
 		if (to.LengthSq() < range * range)
 		{
 			Vector2D localPos = obstacleList[i]->GetCentralPosition();
-
-			double transformX = -GetCentralPosition().Dot(mHeading);
+			
+			double transformX = -GetCentralPosition().Dot(targetVector);
 			double transformY = -GetCentralPosition().Dot(sideVector);
-
+			
 			C2DMatrix transformMat;
-
-			transformMat._11(mHeading.x);
-			transformMat._21(mHeading.y);
+			
+			transformMat._11(targetVector.x);
+			transformMat._21(targetVector.y);
 			transformMat._31(transformX);
-
+			
 			transformMat._12(sideVector.x);
 			transformMat._22(sideVector.y);
 			transformMat._32(transformY);
-
-			transformMat.TransformVector2Ds(localPos);
 
 			// If obstacle is behind ignore
 			if (localPos.x >= 0.0f)
@@ -284,27 +286,28 @@ Vector2D Tank_m008455c::ObstacleAvoidance(Vector2D targetPos)
 
 	if (closestCollObst)
 	{
-		obstacleRadius = sqrt((closestCollObst->GetAdjustedBoundingBox().height * closestCollObst->GetAdjustedBoundingBox().height) +
-			(closestCollObst->GetAdjustedBoundingBox().width * closestCollObst->GetAdjustedBoundingBox().width));
+		obstacleRadius = sqrt(((closestCollObst->GetAdjustedBoundingBox().height / 1.5) * (closestCollObst->GetAdjustedBoundingBox().height / 1.5)) +
+			((closestCollObst->GetAdjustedBoundingBox().width / 1.5) * (closestCollObst->GetAdjustedBoundingBox().width / 1.5)));
 
 		double multiplier = 1.0f + (5 - localPosOfClosestObst.x) / 5;
-
+		
 		steeringVector.y = (obstacleRadius - localPosOfClosestObst.y) * multiplier;
-
+		
 		const double brakeForce = 0.2f;
-
+		
 		steeringVector.x = (obstacleRadius - localPosOfClosestObst.x) * 0.2f;
+
+
+		//steeringVector
 
 		C2DMatrix transformMat;
 
-		transformMat.Rotate(mHeading, sideVector);
+		transformMat.Rotate(targetVector, sideVector);
 
-		transformMat.TransformVector2Ds(steeringVector);
-
-		return steeringVector + Arrive(mHeading);
+		transformMat.TransformVector2Ds(steeringVector);	
 	}
 
-	return Arrive(mHeading);
+	return steeringVector;
 }
 
 //Vector2D SteeringBehavior::ObstacleAvoidance(const std::vector<BaseGameEntity*>& obstacles)

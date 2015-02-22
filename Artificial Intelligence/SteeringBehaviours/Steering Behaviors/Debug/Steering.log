@@ -1,3 +1,2 @@
 ﻿  SteeringBehaviors.cpp
-GameWorld.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
   Steering.vcxproj -> C:\Users\mizukami\Desktop\Artificial Intelligence\SteeringBehaviours\Steering Behaviors\.\Debug\Steering.exe
