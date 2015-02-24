@@ -1,4 +1,9 @@
-﻿  main.cpp
-c:\users\mizukami\desktop\artificial intelligence\bfsanddfs\bfsanddfs\main.cpp(23): warning C4018: '<' : signed/unsigned mismatch
-c:\users\mizukami\desktop\artificial intelligence\bfsanddfs\bfsanddfs\main.cpp(50): warning C4018: '<' : signed/unsigned mismatch
-  BFSandDFS.vcxproj -> C:\Users\mizukami\Desktop\Artificial Intelligence\BFSandDFS\Debug\BFSandDFS.exe
+﻿Build started 24/02/2015 14:00:39.
+     1>Project "E:\uni\Artificial Intelligence\BFSandDFS\BFSandDFS\BFSandDFS.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         BFSandDFS.vcxproj -> E:\uni\Artificial Intelligence\BFSandDFS\Debug\BFSandDFS.exe
+     1>Done Building Project "E:\uni\Artificial Intelligence\BFSandDFS\BFSandDFS\BFSandDFS.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.14

@@ -1,2 +1,9 @@
 ﻿  Tank_m008455c.cpp
-  GameAI.vcxproj -> C:\Users\mizukami\Desktop\Artificial Intelligence\GameAI-master\Debug\GameAI.exe
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(239): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(240): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(218): warning C4101: 'obstacleRadius' : unreferenced local variable
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(372): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(373): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(374): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(375): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+  GameAI.vcxproj -> C:\Users\mizukami\Desktop\Tank-Artificial-Intelligence\Artificial Intelligence\GameAI-master\Debug\GameAI.exe

@@ -57,7 +57,7 @@ void Tank_m008455c::MoveInHeadingDirection(float deltaTime)
 	//Don't allow the tank does not go faster than max speed.
 	mVelocity.Truncate(GetMaxSpeed()); //TODOL: Add Penalty for going faster than MAX Speed.
 	
-	cout << "VelX : " << mVelocity.x << endl <<  "VelY : " << mVelocity.y << endl;
+	//cout << "VelX : " << mVelocity.x << endl <<  "VelY : " << mVelocity.y << endl;
 
 	//Finally, update the position.
 	Vector2D newPosition = GetPosition();
@@ -115,8 +115,8 @@ Vector2D Tank_m008455c::CalculateForce(Vector2D targetPos)
 {
 	Vector2D netForce = Vector2D(0.0f, 0.0f);
 
-	netForce += ObstacleAvoidance(Vec2DNormalize(targetPos));
-	netForce += Arrive(targetPos);
+	//netForce += ObstacleAvoidance(Vec2DNormalize(targetPos));
+	netForce += ObstacleAvoidance(targetPos);
 
 	return netForce;
 }
@@ -201,113 +201,192 @@ void Tank_m008455c::Wandering(float deltaTime, SDL_Event e)
 	// a more random wander.
 }
 
-Vector2D Tank_m008455c::ObstacleAvoidance(Vector2D targetVector)
+Vector2D Tank_m008455c::ObstacleAvoidance(Vector2D targetPos)
 {
 	// Avoid obstacles that will collide with the tank if the tank
 	// continues it's path.
+
+	int count = 0;
+	
+	Vector2D targetVector = Vec2DNormalize(targetPos - GetPosition());
+	
 	sideVector.x = -targetVector.y;
 	sideVector.y = targetVector.x;
-
+	
 	vector<GameObject*> obstacleList = ObstacleManager::Instance()->GetObstacles();
-
+	
 	double obstacleRadius;
-
+	
 	GameObject* closestCollObst = NULL;
-
+	
 	double distToClosestObst = MaxDouble;
-
+	
 	Vector2D localPosOfClosestObst;
 
+	Vector2D position = GetCentralPosition() + (targetVector * (100 * (mVelocity.Length() / GetMaxSpeed())));
+
+	Vector2D steeringVector = { 0.0f, 0.0f };
+	
 	for (unsigned int i = 0; i < obstacleList.size(); i++)
 	{
-		Vector2D to = obstacleList[i]->GetCentralPosition() - GetPosition();
-
-		double heightSq = (obstacleList[i]->GetAdjustedBoundingBox().height / 1.5) * (obstacleList[i]->GetAdjustedBoundingBox().height / 1.5);
-		double widthSq = (obstacleList[i]->GetAdjustedBoundingBox().width / 1.5) * (obstacleList[i]->GetAdjustedBoundingBox().width / 1.5);
-
-		obstacleRadius = sqrt(heightSq + widthSq);
-
-
-		double range = obstacleRadius;
-
-		if (to.LengthSq() < range * range)
+		if (CheckObstacleCollision(position, obstacleList[i]))
 		{
-			Vector2D localPos = obstacleList[i]->GetCentralPosition();
-			
-			double transformX = -GetCentralPosition().Dot(targetVector);
-			double transformY = -GetCentralPosition().Dot(sideVector);
-			
-			C2DMatrix transformMat;
-			
-			transformMat._11(targetVector.x);
-			transformMat._21(targetVector.y);
-			transformMat._31(transformX);
-			
-			transformMat._12(sideVector.x);
-			transformMat._22(sideVector.y);
-			transformMat._32(transformY);
+			cout << "Detected Obstacle : " << i << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 
-			// If obstacle is behind ignore
-			if (localPos.x >= 0.0f)
+			steeringVector.x = sideVector.x * (100 * (mVelocity.Length() / GetMaxSpeed()));
+			steeringVector.y = sideVector.y * (100 * (mVelocity.Length() / GetMaxSpeed()));
+
+			float checkSide1 = (obstacleList[i]->GetCentralPosition() - GetPosition()).Length();
+			float checkSide2 = (obstacleList[i]->GetCentralPosition() - (GetPosition() + steeringVector)).Length();
+
+			if (checkSide1 > checkSide2)
 			{
-				double ExpandedRadius = obstacleRadius + mRadius;
-
-				// If possibility of intersection
-				if (fabs(localPos.y) < ExpandedRadius)
-				{
-					double cX = localPos.x;
-					double cY = localPos.y;
-
-					double SqrtPart = sqrt(ExpandedRadius*ExpandedRadius - cY*cY);
-
-					double ip = cX - SqrtPart;
-
-					if (ip <= 0.0)
-					{
-						ip = cX + SqrtPart;
-					}
-
-					//test to see if this is the closest so far. If it is keep a
-					//record of the obstacle and its local coordinates
-					if (ip < distToClosestObst)
-					{
-						distToClosestObst = ip;
-
-						closestCollObst = obstacleList[i];
-
-						localPosOfClosestObst = localPos;
-					}
-				}
+				steeringVector.x = -steeringVector.x;
+				steeringVector.y = -steeringVector.y;
 			}
+			else
+				int i = 0;
+
+			return steeringVector;
 		}
 	}
 
-	Vector2D steeringVector = {0.0f, 0.0f};
+
+	//for (unsigned int i = 0; i < obstacleList.size(); i++)
+	//{
+	//	Vector2D to = obstacleList[i]->GetCentralPosition() - GetPosition();
+	//
+	//	double heightSq = (obstacleList[i]->GetAdjustedBoundingBox().height) * (obstacleList[i]->GetAdjustedBoundingBox().height);
+	//	double widthSq = (obstacleList[i]->GetAdjustedBoundingBox().width) * (obstacleList[i]->GetAdjustedBoundingBox().width);
+	//
+	//	obstacleRadius = sqrt(heightSq + widthSq);
+	//
+	//	double range = obstacleRadius;
+	//
+	//	float distance = to.Length();
+	//
+	//	if (distance < range)
+	//	{
+	//		Vector2D localPos = obstacleList[i]->GetCentralPosition();
+	//		
+	//		double transformX = -GetCentralPosition().Dot(targetVector);
+	//		double transformY = -GetCentralPosition().Dot(sideVector);
+	//		
+	//		C2DMatrix transformMat;
+	//		
+	//		transformMat._11(targetVector.x);
+	//		transformMat._21(targetVector.y);
+	//		transformMat._31(transformX);
+	//		
+	//		transformMat._12(sideVector.x);
+	//		transformMat._22(sideVector.y);
+	//		transformMat._32(transformY);
+	//
+	//		transformMat.TransformVector2Ds(localPos);
+	//
+	//		// If obstacle is behind ignore
+	//		if (localPos.x >= 0.0f)
+	//		{
+	//			double ExpandedRadius = obstacleRadius + mRadius;
+	//
+	//			// If possibility of intersection
+	//			if (fabs(localPos.y) < ExpandedRadius)
+	//			{
+	//				double cX = localPos.x;
+	//				double cY = localPos.y;
+	//
+	//				double SqrtPart = sqrt(ExpandedRadius*ExpandedRadius - cY*cY);
+	//
+	//				double ip = cX - SqrtPart;
+	//
+	//				if (ip <= 0.0)
+	//				{
+	//					ip = cX + SqrtPart;
+	//				}
+	//
+	//				//test to see if this is the closest so far. If it is keep a
+	//				//record of the obstacle and its local coordinates
+	//				if (ip < distToClosestObst)
+	//				{
+	//					count++;
+	//
+	//					distToClosestObst = ip;
+	//
+	//					closestCollObst = obstacleList[i];
+	//
+	//					localPosOfClosestObst = localPos;
+	//				}	
+	//			}
+	//		}
+	//	}
+	//}
+
+
+
+	
 
 	if (closestCollObst)
 	{
-		obstacleRadius = sqrt(((closestCollObst->GetAdjustedBoundingBox().height / 1.5) * (closestCollObst->GetAdjustedBoundingBox().height / 1.5)) +
-			((closestCollObst->GetAdjustedBoundingBox().width / 1.5) * (closestCollObst->GetAdjustedBoundingBox().width / 1.5)));
+		//cout << closestCollObst->GetCentralPosition << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
 
-		double multiplier = 1.0f + (5 - localPosOfClosestObst.x) / 5;
+		count = 0;
+		//obstacleRadius = sqrt(((closestCollObst->GetAdjustedBoundingBox().height / 1.5) * (closestCollObst->GetAdjustedBoundingBox().height / 1.5)) +
+		//	((closestCollObst->GetAdjustedBoundingBox().width / 1.5) * (closestCollObst->GetAdjustedBoundingBox().width / 1.5)));
+		//
+		//double multiplier = 1.0f + (5 - localPosOfClosestObst.x) / 5;
+		//
+		//steeringVector.y = (obstacleRadius - localPosOfClosestObst.y) * multiplier;
+		//
+		//const double brakeForce = 0.2f;
+		//
+		//steeringVector.x = (obstacleRadius - localPosOfClosestObst.x) * 0.2f;
+		//
+		//C2DMatrix transformMat;
+		//
+		//transformMat.Rotate(targetVector, sideVector);
+		//
+		//transformMat.TransformVector2Ds(steeringVector);	
+
+		//Vector2D aheadVector;
+		//aheadVector = GetCentralPosition() + Vec2DNormalize(mVelocity) * (mVelocity.Length()/GetMaxSpeed());
 		
-		steeringVector.y = (obstacleRadius - localPosOfClosestObst.y) * multiplier;
+		//if (CheckObstacleCollision(aheadVector, closestCollObst))
+		//{
+		steeringVector.x = 5 - closestCollObst->GetCentralPosition().x;
+		steeringVector.y = 5 - closestCollObst->GetCentralPosition().y;
 		
-		const double brakeForce = 0.2f;
+		steeringVector.Normalize();
+		steeringVector.x *= ((mVelocity.Length() / GetMaxSpeed()));
+		steeringVector.y *= ((mVelocity.Length() / GetMaxSpeed()));
 		
-		steeringVector.x = (obstacleRadius - localPosOfClosestObst.x) * 0.2f;
-
-
-		//steeringVector
-
-		C2DMatrix transformMat;
-
-		transformMat.Rotate(targetVector, sideVector);
-
-		transformMat.TransformVector2Ds(steeringVector);	
+		return steeringVector;
+		//}
+		//return steeringVector;
 	}
 
-	return steeringVector;
+	return Arrive(targetPos);
+}
+
+bool Tank_m008455c::CheckObstacleCollision(Vector2D position, GameObject* obstacle)
+{
+	float width = obstacle->GetAdjustedBoundingBox().width;
+	float height = obstacle->GetAdjustedBoundingBox().height;
+	float x = obstacle->GetAdjustedBoundingBox().x;
+	float y = obstacle->GetAdjustedBoundingBox().y;
+
+	//cout << "X : " << position.x << "          " << "Y : " << position.y << endl << endl <<
+		//"obstacleX : " << x << "          " << "obstacleY : " << y << endl << endl << endl;
+
+	if (position.x > x + width)
+		return false;
+	else if (position.x < x)
+		return false;
+	else if (position.y > y + height)
+		return false;
+	else if (position.y < y)
+		return false;
+
+	return true;
 }
 
 //Vector2D SteeringBehavior::ObstacleAvoidance(const std::vector<BaseGameEntity*>& obstacles)

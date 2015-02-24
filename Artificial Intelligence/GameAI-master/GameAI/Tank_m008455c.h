@@ -8,6 +8,7 @@
 #include "WaypointManager.h"
 #include "Waypoint.h"
 #include "C2DMatrix.h"
+#include "Math.h"
 
 #include "Tank_m008455c.h"
 
@@ -92,7 +93,7 @@ private:
 	void Evade(float deltaTime, SDL_Event e);
 	void Wandering(float deltaTime, SDL_Event e);
 
-
+	bool CheckObstacleCollision(Vector2D position, GameObject* obstacle);
 	Vector2D ObstacleAvoidance(Vector2D targetPos);
 
 	void Pathfind(float deltaTime, SDL_Event e);
