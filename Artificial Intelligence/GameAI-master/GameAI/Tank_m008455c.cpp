@@ -13,8 +13,12 @@ Tank_m008455c::Tank_m008455c(SDL_Renderer* renderer, TankSetupDetails details)
 	mManKeyDown = false;
 	mFireKeyDown = false;
 
-	mousePoint.x = GetPosition().x;
-	mousePoint.y = GetPosition().y;
+	mousePoint.x = GetCentralPosition().x;
+	mousePoint.y = GetCentralPosition().y;
+
+	mRenderer = renderer;
+
+	mRadius = (float)sqrt(((GetAdjustedBoundingBox().height / 2) * (GetAdjustedBoundingBox().height / 2)) + ((GetAdjustedBoundingBox().width / 2) * (GetAdjustedBoundingBox().width / 2)));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -37,13 +41,14 @@ void Tank_m008455c::Update(float deltaTime, SDL_Event e)
 	CheckMouseInput(e);
 	//Call parent update.
 	BaseTank::Update(deltaTime, e);
+	DebugLines();
 }
 
 //--------------------------------------------------------------------------------------------------
 
 void Tank_m008455c::MoveInHeadingDirection(float deltaTime)
 {
-	deltaTime *= 5;
+	deltaTime *= 1;
 
 	//Get the force that propels in current heading.
 	Vector2D force = CalculateForce(mousePoint);
@@ -58,15 +63,34 @@ void Tank_m008455c::MoveInHeadingDirection(float deltaTime)
 	mVelocity.Truncate(GetMaxSpeed()); //TODOL: Add Penalty for going faster than MAX Speed.
 	
 	//cout << "VelX : " << mVelocity.x << endl <<  "VelY : " << mVelocity.y << endl;
+	if ((mousePoint - GetCentralPosition()).Length() > 5)
+	{ 
+		RotateHeadingToFacePosition(GetCentrePosition() + mVelocity);
+		RotateHeadingToFacePosition(GetCentrePosition() + mVelocity);
+		RotateHeadingToFacePosition(GetCentrePosition() + mVelocity);
+		RotateHeadingToFacePosition(GetCentrePosition() + mVelocity);
+		RotateHeadingToFacePosition(GetCentrePosition() + mVelocity);
+		RotateHeadingToFacePosition(GetCentrePosition() + mVelocity);
+		RotateHeadingToFacePosition(GetCentrePosition() + mVelocity);
+	}
+		
 
-	//Finally, update the position.
-	Vector2D newPosition = GetPosition();
-	newPosition.x += mVelocity.x*deltaTime;
-	newPosition.y += (mVelocity.y/**-1.0f*/)*deltaTime;	//Y flipped as adding to Y moves down screen.
-	SetPosition(newPosition);
+	// If the tank is not pointing towards its velocity direction, then don't move and turn first.
+	Vector2D tankVector = Vec2DNormalize(GetPointAtFrontOfTank() - GetCentralPosition());
+	Vector2D velocityVector = Vec2DNormalize(mVelocity);
+	float dotProduct = (tankVector.x * velocityVector.x) + (tankVector.y * velocityVector.y) / (tankVector.Length() * velocityVector.Length());
+	float angle = acosf(dotProduct);
 
+	//cout << angle << endl;
 
-	RotateTank(mousePoint);
+	//if (angle > (3*Pi)/4)
+	//{
+		//Finally, update the position.
+		Vector2D newPosition = GetPosition();
+		newPosition.x += mVelocity.x*deltaTime;
+		newPosition.y += (mVelocity.y/**-1.0f*/)*deltaTime;	//Y flipped as adding to Y moves down screen.
+		SetPosition(newPosition);
+	//}
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -100,6 +124,44 @@ Rect2D Tank_m008455c::GetAdjustedBoundingBox()
 
 //--------------------------------------------------------------------------------------------------
 
+void Tank_m008455c::DrawLine(Vector2D startPoint, Vector2D endPoint, int r, int g, int b)
+{
+	SDL_SetRenderDrawColor(mRenderer, r, g, b, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawLine(mRenderer, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+	SDL_RenderDrawLine(mRenderer, startPoint.x + 1.0f, startPoint.y, endPoint.x + 1.0f, endPoint.y);
+	SDL_RenderDrawLine(mRenderer, startPoint.x, startPoint.y + 1.0f, endPoint.x, endPoint.y + 1.0f);
+	SDL_RenderPresent(mRenderer);
+}
+
+//--------------------------------------------------------------------------------------------------
+
+void Tank_m008455c::DebugLines()
+{
+	// Tank
+	DrawLine(GetCentralPosition(), GetCentralPosition() + mVelocity, 255.0f, 0.0f, 0.0f); 
+	DrawLine(GetCentralPosition(), mousePoint, 255.0f, 0.0f, 255.0f);
+
+	vector<GameObject*> obstacleList = ObstacleManager::Instance()->GetObstacles();
+
+	for each (GameObject* obstacles in obstacleList)
+	{
+		DrawLine(obstacles->GetPosition() - Vector2D(mRadius, mRadius),
+			Vector2D(obstacles->GetPosition().x + mRadius + obstacles->GetAdjustedBoundingBox().width, obstacles->GetPosition().y - mRadius), 255.0f, 0.0f, 0.0f);
+
+		DrawLine(obstacles->GetPosition() - Vector2D(mRadius, mRadius),
+			Vector2D(obstacles->GetPosition().x - mRadius, obstacles->GetPosition().y + mRadius + obstacles->GetAdjustedBoundingBox().height), 255.0f, 0.0f, 0.0f);
+
+		DrawLine(Vector2D(obstacles->GetPosition().x - mRadius, obstacles->GetPosition().y + mRadius + obstacles->GetAdjustedBoundingBox().height),
+			Vector2D(obstacles->GetPosition().x + mRadius + obstacles->GetAdjustedBoundingBox().width, obstacles->GetPosition().y + mRadius + obstacles->GetAdjustedBoundingBox().height), 255.0f, 0.0f, 0.0f);
+
+		DrawLine(Vector2D(obstacles->GetPosition().x + mRadius + obstacles->GetAdjustedBoundingBox().width, obstacles->GetPosition().y - mRadius),
+			Vector2D(obstacles->GetPosition().x + mRadius + obstacles->GetAdjustedBoundingBox().width, obstacles->GetPosition().y + mRadius + obstacles->GetAdjustedBoundingBox().height), 255.0f, 0.0f, 0.0f);
+	}
+
+}
+
+//--------------------------------------------------------------------------------------------------
+
 void Tank_m008455c::CheckMouseInput(SDL_Event e)
 {
 	if (e.button.type == SDL_MOUSEBUTTONDOWN)
@@ -115,15 +177,15 @@ Vector2D Tank_m008455c::CalculateForce(Vector2D targetPos)
 {
 	Vector2D netForce = Vector2D(0.0f, 0.0f);
 
-	//netForce += ObstacleAvoidance(Vec2DNormalize(targetPos));
 	netForce += ObstacleAvoidance(targetPos);
+	//netForce += Flee(targetPos);
 
 	return netForce;
 }
 
 void Tank_m008455c::Execute(float deltaTime, SDL_Event e)
 {
-	CheckMouseInput(e);
+	//CheckMouseInput(e);
 
 }
 
@@ -145,11 +207,21 @@ Vector2D Tank_m008455c::Seek(Vector2D targetPos)
 
 Vector2D Tank_m008455c::Flee(Vector2D targetPos)
 {
-	// Opposite direction to Seek.
-	Vector2D desiredVelocity = Vec2DNormalize(GetCentrePosition() - targetPos)
-		* GetMaxSpeed();
+	vector<BaseTank*> tankList = TankManager::Instance()->GetTanks();
 
-	return (desiredVelocity + mVelocity);
+	for each (BaseTank* tank in tankList)
+	{
+		if (tank != this)
+		{
+			// Opposite direction to Seek.
+			//Vector2D desiredVelocity = Vec2DNormalize(GetCentrePosition() - tank->GetCentralPosition())
+			//	* GetMaxSpeed();
+
+		//	return (desiredVelocity + mVelocity);
+		}
+	}
+
+	return Vector2D(0.0f, 0.0f);
 }
 
 Vector2D Tank_m008455c::Arrive(Vector2D targetPos)
@@ -229,26 +301,29 @@ Vector2D Tank_m008455c::ObstacleAvoidance(Vector2D targetPos)
 	
 	for (unsigned int i = 0; i < obstacleList.size(); i++)
 	{
-		if (CheckObstacleCollision(position, obstacleList[i]))
-		{
-			cout << "Detected Obstacle : " << i << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-
-			steeringVector.x = sideVector.x * (100 * (mVelocity.Length() / GetMaxSpeed()));
-			steeringVector.y = sideVector.y * (100 * (mVelocity.Length() / GetMaxSpeed()));
-
-			float checkSide1 = (obstacleList[i]->GetCentralPosition() - GetPosition()).Length();
-			float checkSide2 = (obstacleList[i]->GetCentralPosition() - (GetPosition() + steeringVector)).Length();
-
-			if (checkSide1 > checkSide2)
+		//if(CheckRadialCollision(obstacleList[i]))
+			if (CheckObstacleCollision(position, obstacleList[i]))
 			{
-				steeringVector.x = -steeringVector.x;
-				steeringVector.y = -steeringVector.y;
-			}
-			else
-				int i = 0;
+				DrawLine(obstacleList[i]->GetCentralPosition(), GetCentralPosition(), 255.0f, 255.0f, 255.0f);
 
-			return steeringVector;
-		}
+				cout << "Detected Obstacle : " << i << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+
+				steeringVector.x = sideVector.x * (100 * (mVelocity.Length() / GetMaxSpeed()));
+				steeringVector.y = sideVector.y * (100 * (mVelocity.Length() / GetMaxSpeed()));
+
+				float checkSide1 = (obstacleList[i]->GetCentralPosition() - GetPosition()).Length();
+				float checkSide2 = (obstacleList[i]->GetCentralPosition() - (GetPosition() + steeringVector)).Length();
+
+				if (checkSide1 > checkSide2)
+				{
+					steeringVector.x = -steeringVector.x;
+					steeringVector.y = -steeringVector.y;
+				}
+				else
+					int i = 0;
+
+				return steeringVector;
+			}
 	}
 
 
@@ -387,6 +462,25 @@ bool Tank_m008455c::CheckObstacleCollision(Vector2D position, GameObject* obstac
 		return false;
 
 	return true;
+}
+
+bool Tank_m008455c::CheckRadialCollision(GameObject* obstacle)
+{
+	Vector2D to = obstacle->GetCentralPosition() - GetPosition();
+
+	double heightSq = (obstacle->GetAdjustedBoundingBox().height) * (obstacle->GetAdjustedBoundingBox().height);
+	double widthSq = (obstacle->GetAdjustedBoundingBox().width) * (obstacle->GetAdjustedBoundingBox().width);
+	
+	float obstacleRadius = sqrt(heightSq + widthSq);
+	
+	double range = obstacleRadius;
+	
+	float distance = to.Length();
+	
+	if (distance < range)
+		return true;
+
+	return false;
 }
 
 //Vector2D SteeringBehavior::ObstacleAvoidance(const std::vector<BaseGameEntity*>& obstacles)

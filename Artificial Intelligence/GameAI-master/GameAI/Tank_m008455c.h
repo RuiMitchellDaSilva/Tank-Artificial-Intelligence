@@ -6,11 +6,10 @@
 #include "Commons.h"
 #include "ObstacleManager.h"
 #include "WaypointManager.h"
+#include "TankManager.h"
 #include "Waypoint.h"
 #include "C2DMatrix.h"
 #include "Math.h"
-
-#include "Tank_m008455c.h"
 
 #include <iostream>
 
@@ -33,7 +32,7 @@ enum BehaviourState
 
 //---------------------------------------------------------------
 
-class Tank_m008455c : private BaseTank
+class Tank_m008455c : protected BaseTank
 {
 	//---------------------------------------------------------------
 public:
@@ -82,7 +81,10 @@ private:
 
 	void RotateTank(Vector2D targetPos);
 
-	float mRadius = (float)sqrt((GetAdjustedBoundingBox().height * GetAdjustedBoundingBox().height) + (GetAdjustedBoundingBox().width * GetAdjustedBoundingBox().width));
+	float mRadius;
+
+	SDL_Renderer* mRenderer;
+
 
 	// All Behavioural States that the tank can have
 	void Thinking();
@@ -94,10 +96,14 @@ private:
 	void Wandering(float deltaTime, SDL_Event e);
 
 	bool CheckObstacleCollision(Vector2D position, GameObject* obstacle);
+	bool CheckRadialCollision(GameObject* obstacle);
 	Vector2D ObstacleAvoidance(Vector2D targetPos);
 
 	void Pathfind(float deltaTime, SDL_Event e);
 	Vector2D FollowWaypoint();
+
+	void DebugLines();
+	void DrawLine(Vector2D startPoint, Vector2D endPoint, int r, int g, int b);
 };
 
 //---------------------------------------------------------------

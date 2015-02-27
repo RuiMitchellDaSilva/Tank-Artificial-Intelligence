@@ -314,10 +314,10 @@ void BaseTank::RotateHeadingByRadian(double radian, int sign)
 	//Get the new heading.
 	RotationMatrix.TransformVector2Ds(mHeading);
 
-	//cout << "Heading x = " << mHeading.x << " y = " << mHeading.y << endl;
+	//cout << "RotateHeadingByRadian -- Heading x = " << mHeading.x << " y = " << mHeading.y << endl;
 
 	//Get the new velocity.
-	RotationMatrix.TransformVector2Ds(mVelocity);
+	//RotationMatrix.TransformVector2Ds(mVelocity);
 
 	//Side vector must always be perpendicular to the heading.
 	mSide = mHeading.Perp();

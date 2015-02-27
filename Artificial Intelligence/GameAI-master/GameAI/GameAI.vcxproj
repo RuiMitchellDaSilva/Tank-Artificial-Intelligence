@@ -81,6 +81,7 @@
     <ClCompile Include="LevelMap.cpp" />
     <ClCompile Include="ObstacleManager.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="SteeringBehaviours_m008455c.cpp" />
     <ClCompile Include="TankManager.cpp" />
     <ClCompile Include="Tank_m008455c.cpp" />
     <ClCompile Include="Texture2D.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="GameScreenManager.h" />
     <ClInclude Include="LevelMap.h" />
     <ClInclude Include="ObstacleManager.h" />
+    <ClInclude Include="SteeringBehaviours_m008455c.h" />
     <ClInclude Include="TankManager.h" />
     <ClInclude Include="Tank_m008455c.h" />
     <ClInclude Include="Texture2D.h" />

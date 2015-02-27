@@ -1,9 +1,60 @@
-﻿  Tank_m008455c.cpp
-c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(239): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(240): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(218): warning C4101: 'obstacleRadius' : unreferenced local variable
-c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(372): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(373): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(374): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(375): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-  GameAI.vcxproj -> C:\Users\mizukami\Desktop\Tank-Artificial-Intelligence\Artificial Intelligence\GameAI-master\Debug\GameAI.exe
+﻿Build started 27/02/2015 15:38:02.
+     1>Project "E:\uni\Artificial Intelligence\GameAI-master\GameAI\GameAI.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"E:\uni\Artificial Intelligence\GameAI-master\GameAI\\SDL\mixer_include" /I"E:\uni\Artificial Intelligence\GameAI-master\GameAI\\SDL\include" /I"E:\uni\Artificial Intelligence\GameAI-master\GameAI\\SDL\image_include" /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Tank_m008455c.cpp
+         Tank_m008455c.cpp
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(81): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(130): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(131): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(132): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(141): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(142): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(149): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(152): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(155): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(158): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(307): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(314): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(315): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(290): warning C4101: 'obstacleRadius' : unreferenced local variable
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(447): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(448): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(449): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(450): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(474): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\uni\artificial intelligence\gameai-master\gameai\tank_m008455c.cpp(478): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\uni\Artificial Intelligence\GameAI-master\Debug\GameAI.exe" /INCREMENTAL /NOLOGO /LIBPATH:"E:\uni\Artificial Intelligence\GameAI-master\GameAI\\SDL" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\uni\Artificial Intelligence\GameAI-master\Debug\GameAI.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\uni\Artificial Intelligence\GameAI-master\Debug\GameAI.lib" /MACHINE:X86 Debug\BaseTank.obj
+         Debug\DumbTank.obj
+         Debug\Projectile.obj
+         Debug\ProjectileManager.obj
+         Debug\Collisions.obj
+         Debug\ControlledTank.obj
+         Debug\GameObject.obj
+         Debug\GameScreen.obj
+         Debug\GameScreenLevel1.obj
+         Debug\GameScreenManager.obj
+         Debug\LevelMap.obj
+         Debug\ObstacleManager.obj
+         Debug\Source.obj
+         Debug\SteeringBehaviours_m008455c.obj
+         Debug\TankManager.obj
+         Debug\Tank_m008455c.obj
+         Debug\Texture2D.obj
+         Debug\tinystr.obj
+         Debug\tinyxml.obj
+         Debug\tinyxmlerror.obj
+         Debug\tinyxmlparser.obj
+         Debug\Waypoint.obj
+         Debug\WaypointManager.obj
+         ..\gl\glut32.lib
+         SDL\SDL2.lib
+         SDL\SDL2main.lib
+         SDL\SDL2_image.lib
+         SDL\SDL2_mixer.lib
+         GameAI.vcxproj -> E:\uni\Artificial Intelligence\GameAI-master\Debug\GameAI.exe
+     1>Done Building Project "E:\uni\Artificial Intelligence\GameAI-master\GameAI\GameAI.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:06.58
