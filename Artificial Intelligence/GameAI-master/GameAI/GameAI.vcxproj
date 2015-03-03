@@ -81,9 +81,9 @@
     <ClCompile Include="LevelMap.cpp" />
     <ClCompile Include="ObstacleManager.cpp" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="SteeringBehaviours_m008455c.cpp" />
+    <ClCompile Include="SteeringBehaviours_12008455.cpp" />
     <ClCompile Include="TankManager.cpp" />
-    <ClCompile Include="Tank_m008455c.cpp" />
+    <ClCompile Include="Tank_12008455.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="TinyXML\tinystr.cpp" />
     <ClCompile Include="TinyXML\tinyxml.cpp" />
@@ -108,9 +108,9 @@
     <ClInclude Include="GameScreenManager.h" />
     <ClInclude Include="LevelMap.h" />
     <ClInclude Include="ObstacleManager.h" />
-    <ClInclude Include="SteeringBehaviours_m008455c.h" />
+    <ClInclude Include="SteeringBehaviours_12008455.h" />
     <ClInclude Include="TankManager.h" />
-    <ClInclude Include="Tank_m008455c.h" />
+    <ClInclude Include="Tank_12008455.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />
