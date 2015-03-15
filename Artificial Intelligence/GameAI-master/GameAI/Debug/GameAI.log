@@ -1,60 +1,43 @@
-﻿Build started 03/03/2015 14:55:38.
-     1>Project "C:\Users\m008455c\GameAI-master\GameAI\GameAI.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\m008455c\GameAI-master\GameAI\\SDL\mixer_include" /I"C:\Users\m008455c\GameAI-master\GameAI\\SDL\include" /I"C:\Users\m008455c\GameAI-master\GameAI\\SDL\image_include" /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Tank_12008455.cpp
-         Tank_12008455.cpp
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(75): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(122): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(123): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(124): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(133): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(141): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(144): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(147): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(150): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(305): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(310): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(311): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(288): warning C4101: 'obstacleRadius' : unreferenced local variable
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(443): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(444): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(445): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(446): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(467): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(471): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\m008455c\gameai-master\gameai\tank_12008455.cpp(603): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\m008455c\GameAI-master\Debug\GameAI.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\m008455c\GameAI-master\GameAI\\SDL" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\m008455c\GameAI-master\Debug\GameAI.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\m008455c\GameAI-master\Debug\GameAI.lib" /MACHINE:X86 Debug\BaseTank.obj
-         Debug\DumbTank.obj
-         Debug\Projectile.obj
-         Debug\ProjectileManager.obj
-         Debug\Collisions.obj
-         Debug\ControlledTank.obj
-         Debug\GameObject.obj
-         Debug\GameScreen.obj
-         Debug\GameScreenLevel1.obj
-         Debug\GameScreenManager.obj
-         Debug\LevelMap.obj
-         Debug\ObstacleManager.obj
-         Debug\Source.obj
-         Debug\SteeringBehaviours_12008455.obj
-         Debug\TankManager.obj
-         Debug\Tank_12008455.obj
-         Debug\Texture2D.obj
-         Debug\tinystr.obj
-         Debug\tinyxml.obj
-         Debug\tinyxmlerror.obj
-         Debug\tinyxmlparser.obj
-         Debug\Waypoint.obj
-         Debug\WaypointManager.obj
-         ..\gl\glut32.lib
-         SDL\SDL2.lib
-         SDL\SDL2main.lib
-         SDL\SDL2_image.lib
-         SDL\SDL2_mixer.lib
-         GameAI.vcxproj -> C:\Users\m008455c\GameAI-master\Debug\GameAI.exe
-     1>Done Building Project "C:\Users\m008455c\GameAI-master\GameAI\GameAI.vcxproj" (Build target(s)).
-
-Build succeeded.
-
-Time Elapsed 00:00:01.70
+﻿  Tank_12008455.cpp
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(95): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(96): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(134): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(135): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(136): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(147): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(150): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(153): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(156): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(360): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(361): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(362): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(363): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(378): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(393): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(399): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(413): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(422): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(444): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(581): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(587): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(588): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(589): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(590): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(620): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(636): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(637): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(662): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(664): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(665): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(666): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(667): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(669): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(692): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(696): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(722): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(744): warning C4018: '<' : signed/unsigned mismatch
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(745): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(771): warning C4018: '<' : signed/unsigned mismatch
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(775): warning C4018: '<' : signed/unsigned mismatch
+c:\users\mizukami\desktop\tank-artificial-intelligence\artificial intelligence\gameai-master\gameai\tank_12008455.cpp(790): warning C4018: '<' : signed/unsigned mismatch
+  GameAI.vcxproj -> C:\Users\mizukami\Desktop\Tank-Artificial-Intelligence\Artificial Intelligence\GameAI-master\Debug\GameAI.exe
