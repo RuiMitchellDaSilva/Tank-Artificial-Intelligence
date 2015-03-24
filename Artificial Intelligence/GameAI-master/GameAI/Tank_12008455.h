@@ -32,25 +32,28 @@ enum BehaviourState
 
 //---------------------------------------------------------------
 
-struct EdgeCost
-{
-	double edgeCost;
-	Waypoint * waypointOne;
-	Waypoint * waypointTwo;
-};
+
 
 //---------------------------------------------------------------
 
 struct WaypointStruct
 {
-	Waypoint * waypoint;
-	bool visited = false;
+	int ID;
+	Vector2D waypoint;
 	double cost;
-	vector<EdgeCost> edges;
+	vector<int> neighbourIDs;
+	WaypointStruct * parent = nullptr;
 };
 
 
 //---------------------------------------------------------------
+
+struct Edge
+{
+	double edgeCost;
+	WaypointStruct* waypointOne;
+	WaypointStruct* waypointTwo;
+};
 
 class Tank_12008455 : protected BaseTank
 {
@@ -69,11 +72,6 @@ protected:
 	void	MoveInHeadingDirection(float deltaTime);
 
 private:
-	// All constants
-
-	float detectionDistance = 50.0f;
-
-
 	// All member variables
 
 	TURN_DIRECTION  mTankTurnDirection;
@@ -89,6 +87,9 @@ private:
 
 	BehaviourState mCurrentBehaviourState = SEEK;
 
+	double detectionDist = 40;
+	int numOfNearbyObst = 0;
+
 	Vector2D mMousePoint;
 	Vector2D mSideVector;
 	Vector2D mTargetTankPos;
@@ -100,10 +101,11 @@ private:
 	bool mDrawDebugLines = true;
 
 	// Waypoint/Edge list
-	std::vector<WaypointStruct*> mainList;
-	std::vector<EdgeCost*> edgeList;
+	std::vector<WaypointStruct*> waypointList;
+	std::vector<Edge*> edgeList;
 
-
+	std::vector<WaypointStruct*> calculatedPath;
+	std::vector<WaypointStruct*> tempList;
 
 
 	//DEUG
@@ -122,6 +124,7 @@ private:
 	Vector2D CalculateForce(Vector2D targetPos);
 	void DebugLines(GameObject* obstacle);
 	void DrawLine(Vector2D startPoint, Vector2D endPoint, int r, int g, int b);
+	void DDrawLine(Vector2D startPoint, Vector2D endPoint, int r, int g, int b);
 	double CalculateAngleDiff(Vector2D heading);
 
 	// All Behavioural States that the tank can have and their relevant methods
@@ -138,6 +141,7 @@ private:
 	bool CheckRadialCollision(GameObject* obstacle);
 	void Pathfind(float deltaTime, SDL_Event e);
 	Vector2D FollowWaypoint();
+	Vector2D FollowPathList(Vector2D targetPos);
 
 	void PlotBestPath(Vector2D endPoint);
 	void SetupWaypointData();

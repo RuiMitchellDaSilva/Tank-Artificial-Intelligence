@@ -21,8 +21,9 @@ Tank_12008455::Tank_12008455(SDL_Renderer* renderer, TankSetupDetails details)
 	mRadius = (float)sqrt(((GetAdjustedBoundingBox().height / 2) * (GetAdjustedBoundingBox().height / 2)) + 
 		((GetAdjustedBoundingBox().width / 2) * (GetAdjustedBoundingBox().width / 2)));
 
-	//SetupWaypointData();
-	//PlotBestPath({100.0f, 100.0f});
+	SetupWaypointData();
+
+	PlotBestPath(mMousePoint);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -45,14 +46,13 @@ void Tank_12008455::Update(float deltaTime, SDL_Event e)
 	CheckMouseInput(e);
 	//Call parent update.
 	BaseTank::Update(deltaTime, e);
+	DEBUGDRAWWAYPOINTLINES();
 }
 
 //--------------------------------------------------------------------------------------------------
 
 void Tank_12008455::MoveInHeadingDirection(float deltaTime)
 {
-	deltaTime *= 1;
-
 	//Get the force that propels in current heading.
 	Vector2D force = CalculateForce(mMousePoint);
 
@@ -71,16 +71,12 @@ void Tank_12008455::MoveInHeadingDirection(float deltaTime)
 	// Finally, update the position. The vehicle will first have to face towards the location to move.
 	Vector2D correctHeading = mHeading * -1;
 
-	//if (!mCloseToObstacle)
+	//if (mVelocity.Length() > 0.0f)
 	//{
 		Vector2D newPosition = GetPosition();
 		newPosition.x += (correctHeading.x * (mVelocity.Length() * CalculateAngleDiff(correctHeading)))*deltaTime;
 		newPosition.y += (correctHeading.y * (mVelocity.Length() * CalculateAngleDiff(correctHeading)))*deltaTime;
 		SetPosition(newPosition);
-	//}
-	//else
-	//{
-
 	//}
 }
 
@@ -90,6 +86,15 @@ double Tank_12008455::CalculateAngleDiff(Vector2D heading)
 {
 	// Angle Calulation
 	Vector2D largeHeadingVector = (GetCentralPosition() + (heading * 100.0f)) - GetCentralPosition();
+
+
+
+
+
+
+
+
+	int i = 00000000;
 	Vector2D largeTargetVector = mMousePoint - GetCentralPosition();
 
 	float dotProduct = largeHeadingVector.Dot(largeTargetVector);
@@ -138,22 +143,31 @@ void Tank_12008455::DrawLine(Vector2D startPoint, Vector2D endPoint, int r, int 
 	}
 }
 
+
+void Tank_12008455::DDrawLine(Vector2D startPoint, Vector2D endPoint, int r, int g, int b)
+{
+		SDL_SetRenderDrawColor(mRenderer, r, g, b, SDL_ALPHA_OPAQUE);
+		SDL_RenderDrawLine(mRenderer, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+		SDL_RenderDrawLine(mRenderer, startPoint.x + 1.0f, startPoint.y, endPoint.x + 1.0f, endPoint.y);
+		SDL_RenderDrawLine(mRenderer, startPoint.x, startPoint.y + 1.0f, endPoint.x, endPoint.y + 1.0f);
+		SDL_RenderPresent(mRenderer);
+}
+
 //--------------------------------------------------------------------------------------------------
 
 void Tank_12008455::DebugLines(GameObject* obstacle)
 {
+	DrawLine(obstacle->GetPosition() - Vector2D(mRadius, mRadius),
+		Vector2D(obstacle->GetPosition().x + mRadius + obstacle->GetAdjustedBoundingBox().width, obstacle->GetPosition().y - mRadius), 255.0f, 0.0f, 0.0f);
 
-		DrawLine(obstacle->GetPosition() - Vector2D(mRadius, mRadius),
-			Vector2D(obstacle->GetPosition().x + mRadius + obstacle->GetAdjustedBoundingBox().width, obstacle->GetPosition().y - mRadius), 255.0f, 0.0f, 0.0f);
+	DrawLine(obstacle->GetPosition() - Vector2D(mRadius, mRadius),
+		Vector2D(obstacle->GetPosition().x - mRadius, obstacle->GetPosition().y + mRadius + obstacle->GetAdjustedBoundingBox().height), 255.0f, 0.0f, 0.0f);
 
-		DrawLine(obstacle->GetPosition() - Vector2D(mRadius, mRadius),
-			Vector2D(obstacle->GetPosition().x - mRadius, obstacle->GetPosition().y + mRadius + obstacle->GetAdjustedBoundingBox().height), 255.0f, 0.0f, 0.0f);
+	DrawLine(Vector2D(obstacle->GetPosition().x - mRadius, obstacle->GetPosition().y + mRadius + obstacle->GetAdjustedBoundingBox().height),
+		Vector2D(obstacle->GetPosition().x + mRadius + obstacle->GetAdjustedBoundingBox().width, obstacle->GetPosition().y + mRadius + obstacle->GetAdjustedBoundingBox().height), 255.0f, 0.0f, 0.0f);
 
-		DrawLine(Vector2D(obstacle->GetPosition().x - mRadius, obstacle->GetPosition().y + mRadius + obstacle->GetAdjustedBoundingBox().height),
-			Vector2D(obstacle->GetPosition().x + mRadius + obstacle->GetAdjustedBoundingBox().width, obstacle->GetPosition().y + mRadius + obstacle->GetAdjustedBoundingBox().height), 255.0f, 0.0f, 0.0f);
-
-		DrawLine(Vector2D(obstacle->GetPosition().x + mRadius + obstacle->GetAdjustedBoundingBox().width, obstacle->GetPosition().y - mRadius),
-			Vector2D(obstacle->GetPosition().x + mRadius + obstacle->GetAdjustedBoundingBox().width, obstacle->GetPosition().y + mRadius + obstacle->GetAdjustedBoundingBox().height), 255.0f, 0.0f, 0.0f);
+	DrawLine(Vector2D(obstacle->GetPosition().x + mRadius + obstacle->GetAdjustedBoundingBox().width, obstacle->GetPosition().y - mRadius),
+		Vector2D(obstacle->GetPosition().x + mRadius + obstacle->GetAdjustedBoundingBox().width, obstacle->GetPosition().y + mRadius + obstacle->GetAdjustedBoundingBox().height), 255.0f, 0.0f, 0.0f);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -164,6 +178,8 @@ void Tank_12008455::CheckMouseInput(SDL_Event e)
 	{
 		mMousePoint.x = (double)e.button.x;
 		mMousePoint.y = (double)e.button.y;
+
+		PlotBestPath(mMousePoint);
 	}
 }
 
@@ -173,11 +189,14 @@ Vector2D Tank_12008455::CalculateForce(Vector2D targetPos)
 {
 	Vector2D netForce = Vector2D(0.0f, 0.0f);
 
-	mMousePoint = FollowWaypoint();
+	Vector2D currentTargetPos = FollowPathList(targetPos);
 
-	netForce += ObstacleAvoidance(mMousePoint);
+	netForce += ObstacleAvoidance(currentTargetPos);
 
-	netForce += Arrive(mMousePoint);
+	if (mCurrentWaypointID == calculatedPath.size() - 1)
+		netForce += Arrive(currentTargetPos);
+	else 
+		netForce += Seek(currentTargetPos);
 
 	//DEBUGDRAWWAYPOINTLINES();
 
@@ -320,13 +339,22 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 	// Avoid obstacles that will collide with the tank if the tank
 	// continues it's path.
 
+	// The detection length will become more narrow the number of obstacles that are nearby to the vehicle
+	double modifiedDetectionDistance = 0.0f;
 
+	if (numOfNearbyObst > 0)
+		modifiedDetectionDistance = detectionDist * (1 / numOfNearbyObst);
+	else
+		modifiedDetectionDistance = detectionDist;
 
 	// Acquire the obstacle list
 	vector<GameObject*> obstacleList = ObstacleManager::Instance()->GetObstacles();
 
 	// The Steering Vector thats returned
 	Vector2D steeringVector = { 0.0f, 0.0f };
+
+	// Priority
+	int numOfObstaclesDetected = 0;
 
 	// Update sideVectors
 	mSideVector.x = mHeading.y;
@@ -348,9 +376,9 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 		// A detection vector that scales with the object's speed, this will allow the vehicle to
 		// detect obstacles in front.
 		//
-		Vector2D detectionScaling = ((mHeading * -detectionDistance) * (mVelocity.Length() / GetMaxSpeed()));
+		Vector2D detectionScaling = ((mHeading * -detectionDist) * (mVelocity.Length() / GetMaxSpeed()));
 
-		Vector2D position = GetCentralPosition() + (mHeading * -detectionDistance) + detectionScaling;
+		Vector2D position = GetCentralPosition() + (mHeading * -detectionDist) + detectionScaling;
 
 		// DEBUG
 		// Draw detection box
@@ -372,7 +400,7 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 		// Have an additional obstacle avoidance check with a shorter range in case the first
 		// detection surpasses the size of the obstacle depth.
 		//
-		Vector2D shortPosition = GetCentralPosition() + (mHeading * -(detectionDistance / 3)) + ((mHeading * (-detectionDistance / 3)) *
+		Vector2D shortPosition = GetCentralPosition() + (mHeading * -(detectionDist / 3)) + ((mHeading * (-detectionDist / 3)) *
 			(mVelocity.Length() / GetMaxSpeed()));
 
 		DrawLine(GetCentralPosition(), shortPosition, 0.0f, 0.0f, colour1);
@@ -555,13 +583,30 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 				{
 
 					// 4th Check :
-					// Determine the closest obstacle
-					if (ip < distToClosestObst)
-					{
-						distToClosestObst = ip;
+					// Choose the obstacle with the highest priority
 
+					numOfObstaclesDetected++;
+
+					if (numOfObstaclesDetected > 1)
+					{
+						if (CheckObstacleCollision(position, obstacleList[i], true))
+							closestCollObst = obstacleList[i];
+					}
+					else
 						closestCollObst = obstacleList[i];
-					}	
+
+
+
+					//if (ip < distToClosestObst)
+					//{
+					//	distToClosestObst = ip;
+
+					//	numOfObstacles++;
+
+						// if more than one obstacle, prioritize the obstacle in front
+
+
+					//}	
 
 					//if (mCloseToObstacle)
 					//	numOfNearObstacles++;
@@ -576,11 +621,14 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 
 	if (closestCollObst)
 	{
+		// If objects have been detected, modify how narrow the detection will be
+		numOfNearbyObst = numOfObstaclesDetected;
+
 		mCloseToObstacle = true;
 
 		DrawLine(closestCollObst->GetCentralPosition(), GetCentralPosition(), 255.0f, 255.0f, 255.0f);
 
-		// TEST BEGIN
+		// Resolve if the object is penetrating an obstalce
 
 		// Check which Side of the Obstacle the vehicle is on
 
@@ -606,7 +654,7 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 		float multiplierValue = 100.0f;
 
 		float velocityLength = mVelocity.Length();
-		float minimunValue = 75.0f;
+		float minimunValue = 40.0f;
 
 		if (mVelocity.Length() < minimunValue)
 			if (mVelocity.Length() > 10.0f)
@@ -616,7 +664,7 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 		steeringVector.x = mSideVector.x * (multiplierValue * (velocityLength / GetMaxSpeed()));
 		steeringVector.y = mSideVector.y * (multiplierValue * (velocityLength / GetMaxSpeed()));
 
-		cout << "" << velocityLength << endl;
+		cout << "" << steeringVector.x << "" << steeringVector.y << endl;
 
 
 		// TEST END
@@ -631,10 +679,11 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 		}
 	}
 	else
+	{
 		mCloseToObstacle = false;
-
-
-
+		numOfNearbyObst = 0;
+	}
+		
 	return steeringVector;
 }
 
@@ -725,10 +774,62 @@ Vector2D Tank_12008455::FollowWaypoint()
 
 //--------------------------------------------------------------------------------------------------
 
+Vector2D Tank_12008455::FollowPathList(Vector2D targetPos)
+{
+	// Check if the list has changed
+	if (tempList != calculatedPath)
+	{
+		tempList = calculatedPath;
+		mCurrentWaypointID = 0;
+	}
+
+	// Determine if the vehicle is close enough to detect the waypoint.
+	Vector2D detectionVector = (mHeading * -(detectionDist / 3)) + ((mHeading * (-detectionDist / 3)) *
+		(mVelocity.Length() / GetMaxSpeed()));
+	float detectionLength = detectionVector.Length();
+
+
+	if (mCurrentWaypointID < calculatedPath.size())
+	{
+		Vector2D wayPointPos = calculatedPath.at(mCurrentWaypointID)->waypoint;
+
+		double distanceToWaypoint = Vec2DLength(wayPointPos - GetCentralPosition());
+
+		DrawLine(GetCentralPosition(), wayPointPos, 255.0f, 0.0f, 255.0f);
+
+		// If the waypoint has been reached.
+		if (distanceToWaypoint < detectionLength)
+		{
+			mCurrentWaypointID++;
+			return GetCentralPosition();
+		}
+		else
+			return wayPointPos; // Else seek towards the waypoint.
+	}
+	else
+	{
+		Vector2D wayPointPos = targetPos;
+
+		double distanceToWaypoint = Vec2DLength(wayPointPos - GetCentralPosition());
+
+		DrawLine(GetCentralPosition(), wayPointPos, 255.0f, 0.0f, 255.0f);
+
+		// If the waypoint has been reached.
+		if (distanceToWaypoint < detectionLength)
+		{
+			return GetCentralPosition();
+		}
+		else
+			return wayPointPos; // Else seek towards the waypoint.
+	}
+}
+
+//--------------------------------------------------------------------------------------------------
+
 void Tank_12008455::DEBUGDRAWWAYPOINTLINES()
 {
 	for (int i = 0; i < edgeList.size(); i++)	
-		DrawLine(edgeList[i]->waypointOne->GetPosition(), edgeList[i]->waypointTwo->GetPosition(), 0.0f, 255.0f, 255.0f);
+		DrawLine(edgeList[i]->waypointOne->waypoint, edgeList[i]->waypointTwo->waypoint, 0.0f, 255.0f, 255.0f);
 	
 }
 
@@ -745,55 +846,227 @@ void Tank_12008455::SetupWaypointData()
 		if (!WaypointManager::Instance()->GetWaypointWithID(i))
 			break;
 
-		waypoint->waypoint = WaypointManager::Instance()->GetWaypointWithID(i);
-		waypoint->cost = MaxDouble;
+		waypoint->waypoint = WaypointManager::Instance()->GetWaypointWithID(i)->GetPosition();
+		Vector2D j = WaypointManager::Instance()->GetWaypointWithID(i)->GetPosition();
 
-		mainList.push_back(waypoint);
+		waypoint->cost = MaxDouble;
+		waypoint->ID = i;
+		waypoint->neighbourIDs = WaypointManager::Instance()->GetWaypointWithID(i)->GetConnectedWaypointIDs();
+
+		waypointList.push_back(waypoint);
 
 		i++;
 	}
 
 	// Set up edge costs
-	for (int j = 0; j < mainList.size(); j++)
+	for (int j = 0; j < waypointList.size(); j++)
 	{
-		vector<int> connectedList = mainList.at(j)->waypoint->GetConnectedWaypointIDs();
-
+		vector<int> connectedList = waypointList.at(j)->neighbourIDs;
+	
 		for (int k = 0; k < connectedList.size(); k++)
 		{
-			Vector2D pointPos = mainList.at(connectedList[k])->waypoint->GetPosition();
-
-			double distance = (pointPos - mainList.at(j)->waypoint->GetPosition()).Length();
-
-			EdgeCost* edge = new EdgeCost;
+			Vector2D pointPos = waypointList.at(connectedList[k])->waypoint;
+	
+			double distance = (pointPos - waypointList.at(j)->waypoint).Length();
+	
+			Edge* edge = new Edge;
 			edge->edgeCost = distance;
-			edge->waypointOne = mainList.at(j)->waypoint;
-			edge->waypointTwo = mainList.at(connectedList[k])->waypoint;
-
+			edge->waypointOne = waypointList.at(j);
+			edge->waypointTwo = waypointList.at(connectedList[k]);
+	
 			bool alreadyListed = false;
-
-			// Check to see if the edge is already on the list, else don't add
+	
+			// If undirected, don't uncomment
 			
-			for (int h = 0; h < edgeList.size(); h++)
-			{
-
-				if (edgeList.at(h)->waypointOne == edge->waypointOne)
-				{
-					if (edgeList.at(h)->waypointTwo == edge->waypointTwo)
-						alreadyListed = true;
-				}
-				else if (edgeList.at(h)->waypointOne == edge->waypointTwo)
-				{
-					if (edgeList.at(h)->waypointTwo == edge->waypointOne)
-						alreadyListed = true;
-				}
-							
-			}
-
+			//// Check to see if the edge is already on the list, if the edge is found it won't be duplicated			
+			//for (int h = 0; h < edgeList.size(); h++)
+			//{
+			//
+			//	if (edgeList.at(h)->waypointOne == edge->waypointOne)
+			//	{
+			//		if (edgeList.at(h)->waypointTwo == edge->waypointTwo)
+			//			alreadyListed = true;
+			//	}
+			//	else if (edgeList.at(h)->waypointOne == edge->waypointTwo)
+			//	{
+			//		if (edgeList.at(h)->waypointTwo == edge->waypointOne)
+			//			alreadyListed = true;
+			//	}
+			//				
+			//}
+	
 			if (!alreadyListed)
 				edgeList.push_back(edge);
 		}
 	}
-
 }
 
 //--------------------------------------------------------------------------------------------------
+
+void Tank_12008455::PlotBestPath(Vector2D endPoint)
+{
+	int n = edgeList.size();
+	calculatedPath.clear();
+
+	std::vector<WaypointStruct*> closedList;
+	std::vector<WaypointStruct*> frontier;
+
+	WaypointStruct* startingWaypoint = new WaypointStruct;
+	WaypointStruct* targetWaypoint = new WaypointStruct;
+
+	float closestToPlayer = MaxFloat;
+	float closestToTarget = MaxFloat;
+
+	for (int i = 0; i < waypointList.size(); i++)
+	{
+		// Find closest waypoint
+		Vector2D vectorTo = waypointList.at(i)->waypoint - GetCentralPosition();
+
+		waypointList.at(i)->cost = MaxDouble;
+
+		if (vectorTo.Length() < closestToPlayer)
+		{
+			closestToPlayer = vectorTo.Length();
+			startingWaypoint = waypointList.at(i);
+		}
+
+
+		// Find closest waypoint to the target position
+		vectorTo = waypointList.at(i)->waypoint - endPoint;
+
+		if (vectorTo.Length() < closestToTarget)
+		{
+			closestToTarget = vectorTo.Length();
+			targetWaypoint = waypointList.at(i);
+		}
+	}
+
+	// If no waypoint is found
+	if (!startingWaypoint->waypoint.x || !startingWaypoint->waypoint.y)
+		return;
+
+	for (int i = 0; i < waypointList.size(); i++)
+	{
+		if (waypointList.at(i)->waypoint == startingWaypoint->waypoint)
+			waypointList.at(i)->cost = 0.0f;
+
+		// Reset all waypoint parents 
+		waypointList.at(i)->parent = NULL;
+	}
+
+	frontier.push_back(startingWaypoint);
+
+	// The best node is the one with the lowest cost
+	WaypointStruct* bestNode = new WaypointStruct;
+
+	do
+	{
+		bestNode = frontier.at(0);
+
+		frontier.erase(frontier.begin());
+
+		closedList.push_back(bestNode);
+
+		WaypointStruct* minCostWaypoint = new WaypointStruct;
+		minCostWaypoint->cost = MaxDouble;
+
+		for (int i = 0; i < bestNode->neighbourIDs.size(); i++)
+		{
+			WaypointStruct* currentWaypoint = waypointList.at(bestNode->neighbourIDs.at(i));
+
+			// Find cost to neighbour
+			double totalCost = MaxDouble;
+
+			for (int k = 0; k < edgeList.size(); k++)
+			{
+				if (edgeList.at(k)->waypointOne->waypoint == currentWaypoint->waypoint)
+				{
+					if (edgeList.at(k)->waypointTwo->waypoint == bestNode->waypoint)
+					{
+						totalCost = edgeList.at(k)->edgeCost + bestNode->cost;
+						break;
+					}
+
+				}
+				else if (edgeList.at(k)->waypointTwo->waypoint == currentWaypoint->waypoint)
+				{
+					if (edgeList.at(k)->waypointOne->waypoint == bestNode->waypoint)
+					{
+						totalCost = edgeList.at(k)->edgeCost + bestNode->cost;
+						break;
+					}
+				}
+			}
+
+			if (totalCost < currentWaypoint->cost)
+			{
+				currentWaypoint->cost = totalCost;
+				currentWaypoint->parent = bestNode;
+			}
+
+			bool withinClosed = false;
+			bool withinFrontier = false;
+
+			for (int j = 0; j < closedList.size(); j++)
+			{
+				if (currentWaypoint->waypoint == closedList.at(j)->waypoint)
+				{
+					withinClosed = true;
+					break;
+				}
+			}
+
+			for (int j = 0; j < frontier.size(); j++)
+			{
+				if (currentWaypoint->waypoint == frontier.at(j)->waypoint)
+				{
+					withinFrontier = true;
+					break;
+				}
+			}
+
+			if (!withinClosed)
+			{
+				if (!withinFrontier)
+				{
+					frontier.push_back(currentWaypoint);
+				}
+
+				if (currentWaypoint->cost < minCostWaypoint->cost)
+					minCostWaypoint = currentWaypoint;
+
+			}
+
+
+		}
+
+		// If no minimal waypoint is found
+		if (minCostWaypoint->waypoint.x && minCostWaypoint->waypoint.y)
+		{
+			//minCostWaypoint->parent = bestNode;
+			//bestNode = minCostWaypoint;
+		}			
+
+	} while (!frontier.empty() && bestNode->waypoint != targetWaypoint->waypoint);
+
+	// Craft the path list to traverse
+
+	// Get the starting node
+	std::vector<WaypointStruct*> temp;
+
+	temp.push_back(targetWaypoint);
+	WaypointStruct* currentWaypoint = targetWaypoint->parent;
+
+	while (targetWaypoint->parent)
+	{
+		temp.push_back(currentWaypoint);
+
+		if (currentWaypoint->parent)
+			currentWaypoint = currentWaypoint->parent;
+		else		
+			break;
+	}
+
+	for (int i = 0; i < temp.size(); i++)
+		calculatedPath.push_back(temp.at(temp.size() - (i + 1)));
+}
