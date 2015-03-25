@@ -87,15 +87,7 @@ double Tank_12008455::CalculateAngleDiff(Vector2D heading)
 	// Angle Calulation
 	Vector2D largeHeadingVector = (GetCentralPosition() + (heading * 100.0f)) - GetCentralPosition();
 
-
-
-
-
-
-
-
-	int i = 00000000;
-	Vector2D largeTargetVector = mMousePoint - GetCentralPosition();
+	Vector2D largeTargetVector = mCurrentTargetPosition - GetCentralPosition();
 
 	float dotProduct = largeHeadingVector.Dot(largeTargetVector);
 	float magnitudes = largeTargetVector.Length() * largeHeadingVector.Length();
@@ -342,8 +334,8 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 	// The detection length will become more narrow the number of obstacles that are nearby to the vehicle
 	double modifiedDetectionDistance = 0.0f;
 
-	if (numOfNearbyObst > 0)
-		modifiedDetectionDistance = detectionDist * (1 / numOfNearbyObst);
+	if (numOfNearbyObst > 1)
+		modifiedDetectionDistance = detectionDist * (float)(1 / numOfNearbyObst);
 	else
 		modifiedDetectionDistance = detectionDist;
 
@@ -376,9 +368,9 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 		// A detection vector that scales with the object's speed, this will allow the vehicle to
 		// detect obstacles in front.
 		//
-		Vector2D detectionScaling = ((mHeading * -detectionDist) * (mVelocity.Length() / GetMaxSpeed()));
+		Vector2D detectionScaling = ((mHeading * -modifiedDetectionDistance) * (mVelocity.Length() / GetMaxSpeed()));
 
-		Vector2D position = GetCentralPosition() + (mHeading * -detectionDist) + detectionScaling;
+		Vector2D position = GetCentralPosition() + (mHeading * -modifiedDetectionDistance) + detectionScaling;
 
 		// DEBUG
 		// Draw detection box
@@ -400,7 +392,7 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 		// Have an additional obstacle avoidance check with a shorter range in case the first
 		// detection surpasses the size of the obstacle depth.
 		//
-		Vector2D shortPosition = GetCentralPosition() + (mHeading * -(detectionDist / 3)) + ((mHeading * (-detectionDist / 3)) *
+		Vector2D shortPosition = GetCentralPosition() + (mHeading * -(modifiedDetectionDistance / 3)) + ((mHeading * (-modifiedDetectionDistance / 3)) *
 			(mVelocity.Length() / GetMaxSpeed()));
 
 		DrawLine(GetCentralPosition(), shortPosition, 0.0f, 0.0f, colour1);
@@ -534,8 +526,6 @@ Vector2D Tank_12008455::ObstacleAvoidance(Vector2D targetPos)
 		//	if (ip < distToClosestObst)
 		//
 		///////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
 
@@ -752,6 +742,9 @@ Vector2D Tank_12008455::FollowWaypoint()
 	{
 		Vector2D wayPointPos = WaypointManager::Instance()->GetWaypointWithID(mCurrentWaypointID)->GetPosition();
 
+		// Setup target position to affect rotation
+		mCurrentTargetPosition = wayPointPos;
+
 		double distanceToWaypoint = Vec2DLength(wayPointPos - GetCentralPosition());
 
 		DrawLine(GetCentralPosition(), wayPointPos, 255.0f, 0.0f, 255.0f);
@@ -788,10 +781,12 @@ Vector2D Tank_12008455::FollowPathList(Vector2D targetPos)
 		(mVelocity.Length() / GetMaxSpeed()));
 	float detectionLength = detectionVector.Length();
 
-
 	if (mCurrentWaypointID < calculatedPath.size())
 	{
 		Vector2D wayPointPos = calculatedPath.at(mCurrentWaypointID)->waypoint;
+
+		// Setup target position to affect rotation
+		mCurrentTargetPosition = wayPointPos;
 
 		double distanceToWaypoint = Vec2DLength(wayPointPos - GetCentralPosition());
 
@@ -809,6 +804,9 @@ Vector2D Tank_12008455::FollowPathList(Vector2D targetPos)
 	else
 	{
 		Vector2D wayPointPos = targetPos;
+
+		// Setup target position to affect rotation
+		mCurrentTargetPosition = wayPointPos;
 
 		double distanceToWaypoint = Vec2DLength(wayPointPos - GetCentralPosition());
 

@@ -87,10 +87,11 @@ private:
 
 	BehaviourState mCurrentBehaviourState = SEEK;
 
-	double detectionDist = 40;
-	int numOfNearbyObst = 0;
+	double detectionDist = 40.0f;
+	float numOfNearbyObst = 0.0f;
 
 	Vector2D mMousePoint;
+	Vector2D mCurrentTargetPosition;
 	Vector2D mSideVector;
 	Vector2D mTargetTankPos;
 	float mRadius;
